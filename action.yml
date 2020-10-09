@@ -6,7 +6,9 @@ runs:
   steps:
     - run: echo Hello!
       shell: bash
-    - run: docker pull hexletprojects/js_l1_brain_games4_project:release
+    - run: |
+        docker pull hexletprojects/js_l1_brain_games4_project:release
+        docker run hexletprojects/js_l1_brain_games4_project:release
       shell: bash
-    - run: docker build -t hexletprojects/js_l1_brain_games4_project:release
+    - run: ls -la
       shell: bash
