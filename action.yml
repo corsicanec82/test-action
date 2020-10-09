@@ -8,7 +8,5 @@ runs:
       shell: bash
     - run: |
         docker pull hexletprojects/js_l1_brain_games4_project:release
-        docker run hexletprojects/js_l1_brain_games4_project:release
-      shell: bash
-    - run: ls -la
+        docker run -v `pwd`:/project/code hexletprojects/js_l1_brain_games4_project:release /bin/bash -c 'make setup test lint'
       shell: bash
