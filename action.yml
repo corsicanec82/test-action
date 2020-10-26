@@ -1,12 +1,47 @@
 name: "test-action"
 description: "Test project"
 
+inputs:
+  project_image:
+    description: 'Docker image from original project repository. Deprecated'
+    required: false
+  mount_point:
+    description: 'Build directory'
+    required: false
+    default: '/var/tmp'
+
 runs:
   using: "composite"
   steps:
-    - run: echo Hello!
+      - name: Create build directory
+      run: |
+        mkdir -p ${{ inputs.mount_point }}/source
       shell: bash
-    - run: |
-        docker pull hexletprojects/js_l1_brain_games4_project:release
-        docker run -v `pwd`:/project/code hexletprojects/js_l1_brain_games4_project:release /bin/bash -c 'make setup test lint'
+
+    - name: Copy original project files
+      run: |
+        docker run -v "${{ inputs.mount_point }}:/mnt" hexletprojects/js_l1_brain_games4_project:release bash -c 'cp -r /project/. /mnt/source && rm -rf /mnt/source/code'
       shell: bash
+
+    - name: Create user code directory
+      run: |
+        mkdir -p ${{ inputs.mount_point }}/source/code
+      shell: bash
+
+    - name: Copy user project to build directory
+      run: |
+        cp -r `pwd`/. ${{ inputs.mount_point }}/source/code
+      shell: bash
+
+    - name: Run tests
+      run: |
+        cd ${{ inputs.mount_point }}/source && docker-compose run development make setup test lint
+      shell: bash
+    # - run: echo Hello!
+    #   shell: bash
+    # # - run: |
+    # #     docker pull hexletprojects/js_l1_brain_games4_project:release
+    # #     docker run -v `pwd`:/project/code hexletprojects/js_l1_brain_games4_project:release /bin/bash -c 'make setup test lint'
+    #   shell: bash
+    # - run: echo $CURDIR
+    #   shell: bash
