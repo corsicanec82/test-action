@@ -20,6 +20,7 @@ runs:
 
     - name: Copy original project files
       run: |
+        docker tag hexletprojects/js_l1_brain_games4_project:release source_development:latest
         docker run -v "${{ inputs.mount_point }}:/mnt" hexletprojects/js_l1_brain_games4_project:release bash -c 'cp -r /project/. /mnt/source && rm -rf /mnt/source/code'
       shell: bash
 
