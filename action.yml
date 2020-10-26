@@ -21,7 +21,6 @@ runs:
     - name: Copy original project files
       run: |
         docker run -v "${{ inputs.mount_point }}:/mnt" hexletprojects/js_l1_brain_games4_project:release bash -c 'cp -r /project/. /mnt/source && rm -rf /mnt/source/code'
-        docker tag hexletprojects/js_l1_brain_games4_project:release source_development:latest
       shell: bash
 
     - name: Create user code directory
@@ -32,6 +31,11 @@ runs:
     - name: Copy user project to build directory
       run: |
         cp -r `pwd`/. ${{ inputs.mount_point }}/source/code
+      shell: bash
+
+    - name: Create a tag
+      run: |
+        docker tag hexletprojects/js_l1_brain_games4_project:release source_development:latest
       shell: bash
 
     - name: Run tests
