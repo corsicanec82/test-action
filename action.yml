@@ -20,7 +20,7 @@ runs:
 
     - name: Copy original project files
       run: |
-        docker run -v "${{ inputs.mount_point }}:/mnt" hexletprojects/js_l1_brain_games4_project:release bash -c 'cp -r /project/. /mnt/source && rm -rf /mnt/source/code'
+        docker run -v "${{ inputs.mount_point }}:/mnt" hexletprojects/css_l1_moon_project:release bash -c 'cp -r /project/. /mnt/source && rm -rf /mnt/source/code'
       shell: bash
 
     - name: Create user code directory
@@ -35,18 +35,10 @@ runs:
 
     - name: Create a tag
       run: |
-        docker tag hexletprojects/js_l1_brain_games4_project:release source_development:latest
+        docker tag hexletprojects/css_l1_moon_project:release source_development:latest
       shell: bash
 
     - name: Run tests
       run: |
         cd ${{ inputs.mount_point }}/source && docker-compose run development make setup test lint
       shell: bash
-    # - run: echo Hello!
-    #   shell: bash
-    # # - run: |
-    # #     docker pull hexletprojects/js_l1_brain_games4_project:release
-    # #     docker run -v `pwd`:/project/code hexletprojects/js_l1_brain_games4_project:release /bin/bash -c 'make setup test lint'
-    #   shell: bash
-    # - run: echo $CURDIR
-    #   shell: bash
