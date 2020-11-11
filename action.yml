@@ -42,3 +42,9 @@ runs:
       run: |
         cd ${{ inputs.mount_point }}/source && docker-compose run development make setup test lint
       shell: bash
+    
+    - name: Add artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: diff_snapshots
+        path: ${{ inputs.mount_point }}/source/__tests__/__image_snapshots__/__diff_output__/
