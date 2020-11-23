@@ -41,6 +41,7 @@ runs:
     - name: Run tests
       run: |
         cd ${{ inputs.mount_point }}/source && docker-compose run development make setup test lint
+        echo "SSSSSSSSSSSSSSSSSSSSSSSs"
       shell: bash
 
     - name: After Error
