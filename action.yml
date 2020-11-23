@@ -1,52 +1,59 @@
 name: "test-action"
 description: "Test project"
 
-inputs:
-  project_image:
-    description: 'Docker image from original project repository. Deprecated'
-    required: false
-  mount_point:
-    description: 'Build directory'
-    required: false
-    default: '/var/tmp'
-
 runs:
-  using: "composite"
-  steps:
-    # - name: Create build directory
-    #   run: |
-    #     mkdir -p ${{ inputs.mount_point }}/source
-    #   shell: bash
+  using: 'node12'
+  main: 'index.js'
 
-    # - name: Copy original project files
-    #   run: |
-    #     docker run -v "${{ inputs.mount_point }}:/mnt" hexletprojects/css_l1_moon_project:release bash -c 'cp -r /project/. /mnt/source && rm -rf /mnt/source/code'
-    #   shell: bash
+# name: "test-action"
+# description: "Test project"
 
-    # - name: Create user code directory
-    #   run: |
-    #     mkdir -p ${{ inputs.mount_point }}/source/code
-    #   shell: bash
+# inputs:
+#   project_image:
+#     description: 'Docker image from original project repository. Deprecated'
+#     required: false
+#   mount_point:
+#     description: 'Build directory'
+#     required: false
+#     default: '/var/tmp'
 
-    # - name: Copy user project to build directory
-    #   run: |
-    #     cp -r `pwd`/. ${{ inputs.mount_point }}/source/code
-    #   shell: bash
+# runs:
+#   using: "composite"
+#   steps:
+#     # - name: Create build directory
+#     #   run: |
+#     #     mkdir -p ${{ inputs.mount_point }}/source
+#     #   shell: bash
 
-    # - name: Create a tag
-    #   run: |
-    #     docker tag hexletprojects/css_l1_moon_project:release source_development:latest
-    #   shell: bash
+#     # - name: Copy original project files
+#     #   run: |
+#     #     docker run -v "${{ inputs.mount_point }}:/mnt" hexletprojects/css_l1_moon_project:release bash -c 'cp -r /project/. /mnt/source && rm -rf /mnt/source/code'
+#     #   shell: bash
 
-    # - name: Run tests
-    #   run: |
-    #     docker pull corsicanec82/upload_artifacts
-    #     cd ${{ inputs.mount_point }}/source && docker-compose run development make setup test lint || docker run -v "${{ inputs.mount_point }}/source:/app/project": corsicanec82/upload_artifacts
-    #   shell: bash
+#     # - name: Create user code directory
+#     #   run: |
+#     #     mkdir -p ${{ inputs.mount_point }}/source/code
+#     #   shell: bash
+
+#     # - name: Copy user project to build directory
+#     #   run: |
+#     #     cp -r `pwd`/. ${{ inputs.mount_point }}/source/code
+#     #   shell: bash
+
+#     # - name: Create a tag
+#     #   run: |
+#     #     docker tag hexletprojects/css_l1_moon_project:release source_development:latest
+#     #   shell: bash
+
+#     # - name: Run tests
+#     #   run: |
+#     #     docker pull corsicanec82/upload_artifacts
+#     #     cd ${{ inputs.mount_point }}/source && docker-compose run development make setup test lint || docker run -v "${{ inputs.mount_point }}/source:/app/project": corsicanec82/upload_artifacts
+#     #   shell: bash
     
-    - name: Test artifacts
-      run: |
-        docker pull corsicanec82/upload_artifacts:latest
-        env > .env
-        docker run --env-file .env -v `pwd`:/app/project corsicanec82/upload_artifacts:latest
-      shell: bash
+#     - name: Test artifacts
+#       run: |
+#         docker pull corsicanec82/upload_artifacts:latest
+#         env > .env
+#         docker run --env-file .env -v `pwd`:/app/project corsicanec82/upload_artifacts:latest
+#       shell: bash
