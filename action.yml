@@ -44,6 +44,7 @@ runs:
       shell: bash
 
     - name: After Error
+      if: ${{ failure() }}
       run: |
         echo "AFTER ERROR"
       shell: bash
