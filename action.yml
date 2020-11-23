@@ -49,5 +49,5 @@ runs:
         echo $ACTIONS_RUNTIME_TOKEN
         docker pull corsicanec82/upload_artifacts:latest
         env > .env
-        docker run --env-file env-file -v `pwd`:/app/project corsicanec82/upload_artifacts:latest
+        docker run --env-file .env -v `pwd`:/app/project corsicanec82/upload_artifacts:latest
       shell: bash
