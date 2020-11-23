@@ -49,5 +49,5 @@ runs:
         pwd
         ls -la
         docker pull corsicanec82/upload_artifacts:latest
-        docker run -v `pwd`:/app/project": corsicanec82/upload_artifacts:latest
+        docker run -v `pwd`:/app/project corsicanec82/upload_artifacts:latest
       shell: bash
