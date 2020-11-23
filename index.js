@@ -16,7 +16,7 @@ const app = () => {
 
   fs.mkdirSync(path.join(mountPoint, 'source', 'code'));
 
-  const output2 = execSync('cp -r `pwd`/. $MOUNT_POINT/source/code').toString();
+  const output2 = execSync(`cp -r ${__dirname}/. ${mountPoint}/source/code`).toString();
   console.log(output2);
 
   const output3 = execSync(
