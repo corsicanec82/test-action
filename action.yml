@@ -46,9 +46,8 @@ runs:
     
     - name: Test artifacts
       run: |
-        pwd
-        ls -la
+        env
         docker pull corsicanec82/upload_artifacts:latest
-        env > .env
-        docker run --env-file .env -v `pwd`:/app/project corsicanec82/upload_artifacts:latest
+        env > env-file
+        docker run --env-file env-file -v `pwd`:/app/project corsicanec82/upload_artifacts:latest
       shell: bash
