@@ -13,33 +13,39 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Create build directory
-      run: |
-        mkdir -p ${{ inputs.mount_point }}/source
-      shell: bash
+    # - name: Create build directory
+    #   run: |
+    #     mkdir -p ${{ inputs.mount_point }}/source
+    #   shell: bash
 
-    - name: Copy original project files
-      run: |
-        docker run -v "${{ inputs.mount_point }}:/mnt" hexletprojects/css_l1_moon_project:release bash -c 'cp -r /project/. /mnt/source && rm -rf /mnt/source/code'
-      shell: bash
+    # - name: Copy original project files
+    #   run: |
+    #     docker run -v "${{ inputs.mount_point }}:/mnt" hexletprojects/css_l1_moon_project:release bash -c 'cp -r /project/. /mnt/source && rm -rf /mnt/source/code'
+    #   shell: bash
 
-    - name: Create user code directory
-      run: |
-        mkdir -p ${{ inputs.mount_point }}/source/code
-      shell: bash
+    # - name: Create user code directory
+    #   run: |
+    #     mkdir -p ${{ inputs.mount_point }}/source/code
+    #   shell: bash
 
-    - name: Copy user project to build directory
-      run: |
-        cp -r `pwd`/. ${{ inputs.mount_point }}/source/code
-      shell: bash
+    # - name: Copy user project to build directory
+    #   run: |
+    #     cp -r `pwd`/. ${{ inputs.mount_point }}/source/code
+    #   shell: bash
 
-    - name: Create a tag
-      run: |
-        docker tag hexletprojects/css_l1_moon_project:release source_development:latest
-      shell: bash
+    # - name: Create a tag
+    #   run: |
+    #     docker tag hexletprojects/css_l1_moon_project:release source_development:latest
+    #   shell: bash
 
-    - name: Run tests
+    # - name: Run tests
+    #   run: |
+    #     docker pull corsicanec82/upload_artifacts
+    #     cd ${{ inputs.mount_point }}/source && docker-compose run development make setup test lint || docker run -v "${{ inputs.mount_point }}/source:/app/project": corsicanec82/upload_artifacts
+    #   shell: bash
+    
+    - name: Test artifacts
       run: |
         docker pull corsicanec82/upload_artifacts
-        cd ${{ inputs.mount_point }}/source && docker-compose run development make setup test lint || docker run -v "${{ inputs.mount_point }}/source:/app/project": corsicanec82/upload_artifacts
+        docker run -v `pwd`:/app/project": corsicanec82/upload_artifacts
       shell: bash
