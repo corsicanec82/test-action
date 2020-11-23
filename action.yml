@@ -13,38 +13,37 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Test
+    - name: Create build directory
       run: |
-        pwd
-        ls -la
-        node -v
+        mkdir -p ${{ inputs.mount_point }}/source
       shell: bash
-    # - name: Create build directory
-    #   run: |
-    #     mkdir -p ${{ inputs.mount_point }}/source
-    #   shell: bash
 
-    # - name: Copy original project files
-    #   run: |
-    #     docker run -v "${{ inputs.mount_point }}:/mnt" hexletprojects/css_l1_moon_project:release bash -c 'cp -r /project/. /mnt/source && rm -rf /mnt/source/code'
-    #   shell: bash
+    - name: Copy original project files
+      run: |
+        docker run -v "${{ inputs.mount_point }}:/mnt" hexletprojects/css_l1_moon_project:release bash -c 'cp -r /project/. /mnt/source && rm -rf /mnt/source/code'
+      shell: bash
 
-    # - name: Create user code directory
-    #   run: |
-    #     mkdir -p ${{ inputs.mount_point }}/source/code
-    #   shell: bash
+    - name: Create user code directory
+      run: |
+        mkdir -p ${{ inputs.mount_point }}/source/code
+      shell: bash
 
-    # - name: Copy user project to build directory
-    #   run: |
-    #     cp -r `pwd`/. ${{ inputs.mount_point }}/source/code
-    #   shell: bash
+    - name: Copy user project to build directory
+      run: |
+        cp -r `pwd`/. ${{ inputs.mount_point }}/source/code
+      shell: bash
 
-    # - name: Create a tag
-    #   run: |
-    #     docker tag hexletprojects/css_l1_moon_project:release source_development:latest
-    #   shell: bash
+    - name: Create a tag
+      run: |
+        docker tag hexletprojects/css_l1_moon_project:release source_development:latest
+      shell: bash
 
-    # - name: Run tests
-    #   run: |
-    #     cd ${{ inputs.mount_point }}/source && docker-compose run development make setup test lint
-    #   shell: bash
+    - name: Run tests
+      run: |
+        cd ${{ inputs.mount_point }}/source && docker-compose run development make setup test lint
+      shell: bash
+
+    - name: After Error
+      run: |
+        echo "AFTER ERROR"
+      shell: bash
