@@ -43,9 +43,3 @@ runs:
         cd ${{ inputs.mount_point }}/source && docker-compose run development make setup test lint
         echo "SSSSSSSSSSSSSSSSSSSSSSSs"
       shell: bash
-
-    - name: After Error
-      if: ${{ failure() }}
-      run: |
-        echo "AFTER ERROR"
-      shell: bash
