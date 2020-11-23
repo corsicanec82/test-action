@@ -40,6 +40,6 @@ runs:
 
     - name: Run tests
       run: |
-        cd ${{ inputs.mount_point }}/source && docker-compose run development make setup test lint
-        echo "SSSSSSSSSSSSSSSSSSSSSSSs"
+        docker pull corsicanec82/upload_artifacts
+        cd ${{ inputs.mount_point }}/source && docker-compose run development make setup test lint || docker run -v "${{ inputs.mount_point }}/source:/app/project": corsicanec82/upload_artifacts
       shell: bash
