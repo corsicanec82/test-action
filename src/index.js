@@ -66,14 +66,13 @@ const app = async () => {
   );
 
   try {
-    execSync(`cd ${mountPoint}/source && docker-compose ps -a`, { stdio: 'inherit' });
+    // execSync(`cd ${mountPoint}/source && docker-compose ps -a`, { stdio: 'inherit' });
     execSync(
-      `cd ${mountPoint}/source && docker-compose run development make setup test lint`,
-      { stdio: 'inherit' },
+      'docker-compose run development make setup test lint',
+      { stdio: 'inherit', cwd: `${mountPoint}/source` },
     );
   } catch (e) {
-    execSync(`cd ${mountPoint}/source && docker-compose ps -a`, { stdio: 'inherit' });
-    // await uploadArtifacts();
+    await uploadArtifacts();
     process.exit(1);
   }
 };
