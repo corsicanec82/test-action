@@ -70,6 +70,8 @@ const app = async () => {
   );
   console.log('STDOUT', obj.stdout);
   console.log('STDERR', obj.stderr);
+  console.log('OUTPUT', obj.output);
+  console.log('ERR', obj.error);
 
   if (obj.error) {
     await uploadArtifacts();
