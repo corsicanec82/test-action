@@ -26,10 +26,14 @@ const app = () => {
     { stdio: 'inherit' },
   );
 
-  execSync(
-    `cd ${mountPoint}/source && docker-compose run development make setup test lint`,
-    { stdio: 'inherit' },
-  );
+  try {
+    execSync(
+      `cd ${mountPoint}/source && docker-compose run development make setup test lint`,
+      { stdio: 'inherit' },
+    );
+  } catch (e) {
+    console.log('JOPA');
+  }
 };
 
 app();
