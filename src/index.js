@@ -55,7 +55,7 @@ const app = async () => {
   fs.mkdirSync(path.join(mountPoint, 'source', 'code'));
 
   execSync(
-    `cp -r . ${mountPoint}/source/code`,
+    `cp -r $(pwd)/. ${mountPoint}/source/code`,
     { stdio: 'inherit' },
   );
 
