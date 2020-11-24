@@ -3,7 +3,7 @@ const path = require('path');
 const childProcess = require('child_process');
 const artifact = require('@actions/artifact');
 
-const { execSync } = childProcess;
+const { execSync, spawnSync } = childProcess;
 
 const mountPoint = '/var/tmp';
 
@@ -41,6 +41,7 @@ const uploadArtifacts = async () => {
   const artifactClient = artifact.create();
   const artifactName = 'test-results';
   await artifactClient.uploadArtifact(artifactName, filepaths, diffpath);
+  console.log('Download snapshots from Artifacts');
 };
 
 const app = async () => {
@@ -64,7 +65,7 @@ const app = async () => {
   );
 
   try {
-    execSync(
+    spawnSync(
       `cd ${mountPoint}/source && docker-compose run development make setup test lint`,
       { stdio: 'inherit' },
     );
