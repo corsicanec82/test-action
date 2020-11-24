@@ -2,10 +2,13 @@ const fs = require('fs');
 const path = require('path');
 const childProcess = require('child_process');
 const artifact = require('@actions/artifact');
+const util = require('util');
 
-const { execSync } = childProcess;
+const { execSync, exec } = childProcess;
 
 const mountPoint = '/var/tmp';
+
+const execAsync = util.promisify(exec);
 
 const diffpath = path.join(
   mountPoint,
@@ -65,11 +68,17 @@ const app = async () => {
   );
 
   try {
-    execSync(
+    const { stdout, stderr } = await execAsync(
       `cd ${mountPoint}/source && docker-compose run development make setup test lint`,
-      { stdio: 'inherit' },
     );
+    console.log('STDOUT', stdout);
+    console.log('STDERR', stderr);
+    // execSync(
+    //   `cd ${mountPoint}/source && docker-compose run development make setup test lint`,
+    //   { stdio: 'inherit' },
+    // );
   } catch (e) {
+    console.log(e);
     await uploadArtifacts();
     process.exit(1);
   }
