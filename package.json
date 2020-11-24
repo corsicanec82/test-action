@@ -1,0 +1,30 @@
+{
+  "name": "test-action",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "webpack --mode production",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/corsicanec82/test-action.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/corsicanec82/test-action/issues"
+  },
+  "homepage": "https://github.com/corsicanec82/test-action#readme",
+  "dependencies": {
+    "@actions/artifact": "^0.4.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.12.8",
+    "@babel/preset-env": "^7.12.7",
+    "babel-loader": "^8.2.1",
+    "webpack": "^5.6.0",
+    "webpack-cli": "^4.2.0"
+  }
+}
