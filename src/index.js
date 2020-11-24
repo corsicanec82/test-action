@@ -66,7 +66,7 @@ const app = async () => {
   );
 
   try {
-    execSync(`cd ${mountPoint}/source && docker-compose ps -a`, { stdio: 'inherit' });
+    execSync(`cd ${mountPoint}/source && docker-compose run development make setup test lint`, { stdio: 'inherit' });
     // execSync(
     //   'docker-compose run development make setup test lint',
     //   { stdio: 'inherit', cwd: `${mountPoint}/source` },
