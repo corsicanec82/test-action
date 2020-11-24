@@ -3,7 +3,7 @@ const path = require('path');
 const childProcess = require('child_process');
 const artifact = require('@actions/artifact');
 
-const { execSync, spawnSync } = childProcess;
+const { execSync } = childProcess;
 
 const mountPoint = '/var/tmp';
 
@@ -65,7 +65,7 @@ const app = async () => {
   );
 
   try {
-    spawnSync(
+    execSync(
       `cd ${mountPoint}/source && docker-compose run development make setup test lint`,
       { stdio: 'inherit' },
     );
