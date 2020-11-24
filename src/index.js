@@ -67,7 +67,7 @@ const app = async () => {
   try {
     execSync(
       `cd ${mountPoint}/source && docker-compose run development make setup test lint`,
-      { stdio: 'inherit', shell: '/bin/bash', cwd: `${mountPoint}/source` },
+      { stdio: 'inherit' },
     );
   } catch (e) {
     await uploadArtifacts();
