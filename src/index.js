@@ -65,7 +65,11 @@ const app = async () => {
   );
 
   const obj = spawnSync(
-    `cd ${mountPoint}/source && docker-compose run development make setup test lint`,
+    'docker-compose',
+    ['run', 'development', 'make', 'setup', 'test', 'lint'],
+    {
+      cwd: `${mountPoint}/source`,
+    },
     // { stdio: 'inherit' },
   );
   console.log('STDOUT', obj.stdout);
