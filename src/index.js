@@ -67,6 +67,10 @@ const app = async () => {
     `cp -r . ${mountPoint}/source/code`,
     { stdio: 'inherit' },
   );
+  execSync(
+    `ls -la ${mountPoint}/source/code`,
+    { stdio: 'inherit' },
+  );
 
   execSync(
     'docker tag hexletprojects/css_l1_moon_project:release source_development:latest',
@@ -75,10 +79,10 @@ const app = async () => {
 
   try {
     // execSync(`cd ${mountPoint}/source && docker-compose run development make setup test lint`, { stdio: 'inherit' });
-    // execSync(
-    //   'docker-compose run development make setup test lint',
-    //   { stdio: 'inherit', cwd: `${mountPoint}/source` },
-    // );
+    execSync(
+      'docker-compose run development make setup test lint',
+      { stdio: 'inherit', cwd: `${mountPoint}/source` },
+    );
   } catch (e) {
     await uploadArtifacts();
     process.exit(1);
