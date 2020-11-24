@@ -4,11 +4,23 @@ const childProcess = require('child_process');
 const artifact = require('@actions/artifact');
 // const util = require('util');
 
-const { execSync, exec } = childProcess;
+const { execSync, exec, spawn } = childProcess;
 
 const mountPoint = '/var/tmp';
 
 // const execAsync = util.promisify(exec);
+
+const spawnAsync = (...args) => {
+  const promise = new Promise((resolve, reject) => {
+    const child = spawn(...args);
+
+    child.on('exit', () => {
+      reject(new Error('JOPA'));
+    });
+  });
+
+  return promise;
+};
 
 const diffpath = path.join(
   mountPoint,
@@ -68,15 +80,17 @@ const app = async () => {
   );
 
   try {
-    // const { stdout, stderr } = await execAsync(
-    //   `cd ${mountPoint}/source && docker-compose run development make setup test lint`,
-    // );
-    // console.log('STDOUT', stdout);
-    // console.log('STDERR', stderr);
-    execSync(
-      `cd ${mountPoint}/source && docker-compose run development make setup test lint`,
-      { stdio: 'inherit' },
+    await spawnAsync(
+      'docker-compose',
+      ['run', 'development', 'make', 'setup', 'test', 'lint'],
+      {
+        cwd: `${mountPoint}/source`,
+      },
     );
+    // execSync(
+    //   `cd ${mountPoint}/source && docker-compose run development make setup test lint`,
+    //   { stdio: 'inherit' },
+    // );
   } catch (e) {
     // console.log(e);
     await uploadArtifacts();
