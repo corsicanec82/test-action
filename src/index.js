@@ -48,28 +48,28 @@ const app = async () => {
   fs.mkdirSync(path.join(mountPoint, 'source'));
 
   execSync(
-    `docker run -v ${mountPoint}:/mnt corsicanec82/css_l1:latest bash -c 'cp -r /project/. /mnt/source && rm -rf /mnt/source/code'`,
-    // `docker run -v ${mountPoint}:/mnt hexletprojects/css_l1_moon_project:release bash -c 'cp -r /project/. /mnt/source && rm -rf /mnt/source/code'`,
+    // `docker run -v ${mountPoint}:/mnt corsicanec82/css_l1:latest bash -c 'cp -r /project/. /mnt/source && rm -rf /mnt/source/code'`,
+    `docker run -v ${mountPoint}:/mnt hexletprojects/css_l1_moon_project:release bash -c 'cp -r /project/. /mnt/source && rm -rf /mnt/source/code'`,
     { stdio: 'inherit' },
   );
 
   fs.mkdirSync(path.join(mountPoint, 'source', 'code'));
 
+  // execSync(
+  //   `pwd`,
+  //   { stdio: 'inherit' },
+  // );
+  // execSync(
+  //   `ls -la`,
+  //   { stdio: 'inherit' },
+  // );
   execSync(
-    `pwd`,
-    { stdio: 'inherit' },
-  );
-  execSync(
-    `ls -la`,
-    { stdio: 'inherit' },
-  );
-  execSync(
-    `cp -r ${__dirname}/. ${mountPoint}/source/code`,
+    `cp -r . ${mountPoint}/source/code`,
     { stdio: 'inherit' },
   );
 
   execSync(
-    'docker tag corsicanec82/css_l1:latest source_development:latest',
+    'docker tag hexletprojects/css_l1_moon_project:release source_development:latest',
     { stdio: 'inherit' },
   );
 
