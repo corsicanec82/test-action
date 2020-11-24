@@ -2,25 +2,10 @@ const fs = require('fs');
 const path = require('path');
 const childProcess = require('child_process');
 const artifact = require('@actions/artifact');
-// const util = require('util');
 
-const { execSync, exec, spawn } = childProcess;
+const { execSync } = childProcess;
 
 const mountPoint = '/var/tmp';
-
-// const execAsync = util.promisify(exec);
-
-const spawnAsync = (...args) => {
-  const promise = new Promise((resolve, reject) => {
-    const child = spawn(...args);
-
-    child.on('exit', () => {
-      reject(new Error('JOPA'));
-    });
-  });
-
-  return promise;
-};
 
 const diffpath = path.join(
   mountPoint,
@@ -81,20 +66,14 @@ const app = async () => {
   );
 
   try {
-    // await spawnAsync(
-    //   'docker-compose',
-    //   ['run', 'development', 'make', 'setup', 'test', 'lint'],
-    //   {
-    //     cwd: `${mountPoint}/source`,
-    //   },
-    // );
+    execSync('docker-compose ps', { stdio: 'inherit' });
     execSync(
       `cd ${mountPoint}/source && docker-compose run development make setup test lint`,
       { stdio: 'inherit' },
     );
+    execSync('docker-compose ps', { stdio: 'inherit' });
   } catch (e) {
-    // console.log(e);
-    await uploadArtifacts();
+    // await uploadArtifacts();
     process.exit(1);
   }
 };
