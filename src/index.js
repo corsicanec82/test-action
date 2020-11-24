@@ -3,7 +3,7 @@ const path = require('path');
 const childProcess = require('child_process');
 const artifact = require('@actions/artifact');
 
-const { execSync } = childProcess;
+const { execSync, spawnSync } = childProcess;
 
 const mountPoint = '/var/tmp';
 
@@ -65,10 +65,12 @@ const app = async () => {
   );
 
   try {
-    execSync(
+    spawnSync(
       `cd ${mountPoint}/source && docker-compose run development make setup test lint`,
       { stdio: 'inherit' },
     );
+    spawnSync('echo "JKHKHJK"', { stdio: 'inherit' });
+    console.log('JOPA');
   } catch (e) {
     await uploadArtifacts();
     process.exit(1);
