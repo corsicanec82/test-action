@@ -63,7 +63,8 @@ const app = async () => {
   fs.mkdirSync(path.join(mountPoint, 'source'));
 
   execSync(
-    `docker run -v ${mountPoint}:/mnt hexletprojects/css_l1_moon_project:release bash -c 'cp -r /project/. /mnt/source && rm -rf /mnt/source/code'`,
+    `docker run -v ${mountPoint}:/mnt corsicanec82/css_l1:latest bash -c 'cp -r /project/. /mnt/source && rm -rf /mnt/source/code'`,
+    // `docker run -v ${mountPoint}:/mnt hexletprojects/css_l1_moon_project:release bash -c 'cp -r /project/. /mnt/source && rm -rf /mnt/source/code'`,
     { stdio: 'inherit' },
   );
 
@@ -75,22 +76,22 @@ const app = async () => {
   );
 
   execSync(
-    'docker tag hexletprojects/css_l1_moon_project:release source_development:latest',
+    'docker tag corsicanec82/css_l1:latest source_development:latest',
     { stdio: 'inherit' },
   );
 
   try {
-    await spawnAsync(
-      'docker-compose',
-      ['run', 'development', 'make', 'setup', 'test', 'lint'],
-      {
-        cwd: `${mountPoint}/source`,
-      },
-    );
-    // execSync(
-    //   `cd ${mountPoint}/source && docker-compose run development make setup test lint`,
-    //   { stdio: 'inherit' },
+    // await spawnAsync(
+    //   'docker-compose',
+    //   ['run', 'development', 'make', 'setup', 'test', 'lint'],
+    //   {
+    //     cwd: `${mountPoint}/source`,
+    //   },
     // );
+    execSync(
+      `cd ${mountPoint}/source && docker-compose run development make setup test lint`,
+      { stdio: 'inherit' },
+    );
   } catch (e) {
     // console.log(e);
     await uploadArtifacts();
