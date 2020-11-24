@@ -64,17 +64,29 @@ const app = async () => {
     { stdio: 'inherit' },
   );
 
-  try {
-    spawnSync(
-      `cd ${mountPoint}/source && docker-compose run development make setup test lint`,
-      { stdio: 'inherit' },
-    );
-    spawnSync('echo "JKHKHJK"', { stdio: 'inherit' });
-    console.log('JOPA');
-  } catch (e) {
+  const obj = spawnSync(
+    `cd ${mountPoint}/source && docker-compose run development make setup test lint`,
+    // { stdio: 'inherit' },
+  );
+  console.log('STDOUT', obj.stdout);
+  console.log('STDERR', obj.stderr);
+
+  if (obj.error) {
     await uploadArtifacts();
     process.exit(1);
   }
+
+  // try {
+  //   spawnSync(
+  //     `cd ${mountPoint}/source && docker-compose run development make setup test lint`,
+  //     { stdio: 'inherit' },
+  //   );
+  //   spawnSync('echo "JKHKHJK"', { stdio: 'inherit' });
+  //   console.log('JOPA');
+  // } catch (e) {
+  //   await uploadArtifacts();
+  //   process.exit(1);
+  // }
 };
 
 app();
