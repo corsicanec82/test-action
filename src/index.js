@@ -3,7 +3,7 @@ const path = require('path');
 const childProcess = require('child_process');
 const artifact = require('@actions/artifact');
 
-const { execSync, spawnSync } = childProcess;
+const { execSync } = childProcess;
 
 const mountPoint = '/var/tmp';
 
@@ -64,36 +64,15 @@ const app = async () => {
     { stdio: 'inherit' },
   );
 
-  const obj = spawnSync(
-    'docker-compose',
-    ['run', 'development', 'make', 'setup', 'test', 'lint'],
-    {
-      cwd: `${mountPoint}/source`,
-    },
-    // { stdio: 'inherit' },
-  );
-  console.log('STDOUT', obj.stdout.toString());
-  console.log('STDERR', obj.stderr.toString());
-  console.log('OUTPUT', obj.output.toString());
-  console.log('ERR', obj.error);
-  console.log(obj);
-
-  // if (obj.error) {
+  try {
+    execSync(
+      `cd ${mountPoint}/source && docker-compose run development make setup test lint`,
+      { stdio: 'inherit', shell: '/bin/bash', cwd: `${mountPoint}/source` },
+    );
+  } catch (e) {
     await uploadArtifacts();
     process.exit(1);
-  // }
-
-  // try {
-  //   spawnSync(
-  //     `cd ${mountPoint}/source && docker-compose run development make setup test lint`,
-  //     { stdio: 'inherit' },
-  //   );
-  //   spawnSync('echo "JKHKHJK"', { stdio: 'inherit' });
-  //   console.log('JOPA');
-  // } catch (e) {
-  //   await uploadArtifacts();
-  //   process.exit(1);
-  // }
+  }
 };
 
 app();
