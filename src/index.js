@@ -38,7 +38,7 @@ const uploadArtifacts = async () => {
   }
 
   const artifactClient = artifact.create();
-  const artifactName = 'my-artifact';
+  const artifactName = 'test-results';
   await artifactClient.uploadArtifact(artifactName, filepaths, diffpath);
 };
 
