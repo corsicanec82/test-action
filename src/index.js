@@ -56,6 +56,14 @@ const app = async () => {
   fs.mkdirSync(path.join(mountPoint, 'source', 'code'));
 
   execSync(
+    `pwd`,
+    { stdio: 'inherit' },
+  );
+  execSync(
+    `ls -la`,
+    { stdio: 'inherit' },
+  );
+  execSync(
     `cp -r ${__dirname}/. ${mountPoint}/source/code`,
     { stdio: 'inherit' },
   );
@@ -66,7 +74,7 @@ const app = async () => {
   );
 
   try {
-    execSync(`cd ${mountPoint}/source && docker-compose run development make setup test lint`, { stdio: 'inherit' });
+    // execSync(`cd ${mountPoint}/source && docker-compose run development make setup test lint`, { stdio: 'inherit' });
     // execSync(
     //   'docker-compose run development make setup test lint',
     //   { stdio: 'inherit', cwd: `${mountPoint}/source` },
