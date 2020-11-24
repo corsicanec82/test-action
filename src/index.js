@@ -1,12 +1,48 @@
 const fs = require('fs');
 const path = require('path');
 const childProcess = require('child_process');
+const artifact = require('@actions/artifact');
 
 const { execSync } = childProcess;
 
 const mountPoint = '/var/tmp';
 
-const app = () => {
+const diffpath = path.resolve(
+  'project',
+  '__tests__',
+  '__image_snapshots__',
+  '__diff_output__',
+);
+
+const uploadArtifacts = async () => {
+  if (!fs.existsSync(diffpath)) {
+    return;
+  }
+
+  const diffstats = fs.statSync(diffpath);
+  if (!diffstats.isDirectory()) {
+    return;
+  }
+
+  const filepaths = fs
+    .readdirSync(diffpath)
+    .filter((filename) => {
+      const filepath = path.join(diffpath, filename);
+      const stats = fs.statSync(filepath);
+      return stats.isFile();
+    })
+    .map((filename) => path.join(diffpath, filename));
+
+  if (filepaths.length === 0) {
+    return;
+  }
+
+  const artifactClient = artifact.create();
+  const artifactName = 'my-artifact';
+  await artifactClient.uploadArtifact(artifactName, filepaths, diffpath);
+};
+
+const app = async () => {
   fs.mkdirSync(path.join(mountPoint, 'source'));
 
   execSync(
@@ -32,7 +68,7 @@ const app = () => {
       { stdio: 'inherit' },
     );
   } catch (e) {
-    console.log('JOPA');
+    await uploadArtifacts();
   }
 };
 
