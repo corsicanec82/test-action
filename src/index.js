@@ -48,7 +48,6 @@ const app = async () => {
   fs.mkdirSync(path.join(mountPoint, 'source'));
 
   execSync(
-    // `docker run -v ${mountPoint}:/mnt corsicanec82/css_l1:latest bash -c 'cp -r /project/. /mnt/source && rm -rf /mnt/source/code'`,
     `docker run -v ${mountPoint}:/mnt hexletprojects/css_l1_moon_project:release bash -c 'cp -r /project/. /mnt/source && rm -rf /mnt/source/code'`,
     { stdio: 'inherit' },
   );
@@ -56,19 +55,7 @@ const app = async () => {
   fs.mkdirSync(path.join(mountPoint, 'source', 'code'));
 
   execSync(
-    `pwd`,
-    { stdio: 'inherit' },
-  );
-  execSync(
-    `ls -la`,
-    { stdio: 'inherit' },
-  );
-  execSync(
     `cp -r . ${mountPoint}/source/code`,
-    { stdio: 'inherit' },
-  );
-  execSync(
-    `ls -la ${mountPoint}/source/code`,
     { stdio: 'inherit' },
   );
 
@@ -78,7 +65,6 @@ const app = async () => {
   );
 
   try {
-    // execSync(`cd ${mountPoint}/source && docker-compose run development make setup test lint`, { stdio: 'inherit' });
     execSync(
       'docker-compose run development make setup test lint',
       { stdio: 'inherit', cwd: `${mountPoint}/source` },
