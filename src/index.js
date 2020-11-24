@@ -7,8 +7,9 @@ const { execSync } = childProcess;
 
 const mountPoint = '/var/tmp';
 
-const diffpath = path.resolve(
-  'project',
+const diffpath = path.join(
+  mountPoint,
+  'source',
   '__tests__',
   '__image_snapshots__',
   '__diff_output__',
@@ -69,6 +70,7 @@ const app = async () => {
     );
   } catch (e) {
     await uploadArtifacts();
+    process.exit(1);
   }
 };
 
