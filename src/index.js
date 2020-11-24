@@ -72,15 +72,16 @@ const app = async () => {
     },
     // { stdio: 'inherit' },
   );
-  console.log('STDOUT', obj.stdout);
-  console.log('STDERR', obj.stderr);
-  console.log('OUTPUT', obj.output);
+  console.log('STDOUT', obj.stdout.toString());
+  console.log('STDERR', obj.stderr.toString());
+  console.log('OUTPUT', obj.output.toString());
   console.log('ERR', obj.error);
+  console.log(obj);
 
-  if (obj.error) {
+  // if (obj.error) {
     await uploadArtifacts();
     process.exit(1);
-  }
+  // }
 
   // try {
   //   spawnSync(
