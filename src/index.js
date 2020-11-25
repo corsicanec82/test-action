@@ -90,7 +90,7 @@ const app = async () => {
   }
   core.info('\u001b[38;5;6mChecking completed.');
 
-  core.info('Preparing to start testing. Please wait...');
+  core.info('Preparing to start testing. It can take some time. Please wait...');
   // Create build directory
   await io.mkdirP(buildPath);
 
@@ -108,12 +108,10 @@ const app = async () => {
   await io.cp(`${projectPath}/.`, codePath, { recursive: true });
 
   // Create a tags
-  await exec.exec('docker tag hexletprojects/css_l1_moon_project:release source_development:latest', [], { silent: false });
-  await exec.exec('docker tag source_development:latest source_server:latest', [], { silent: false });
-  await exec.exec('docker tag source_development:latest source_db:latest', [], { silent: false });
+  await exec.exec('docker tag hexletprojects/css_l1_moon_project:release source_development:latest', [], { silent: true });
 
   // Build images
-  await exec.exec('docker-compose', ['build'], { cwd: buildPath, silent: false });
+  await exec.exec('docker-compose', ['build'], { cwd: buildPath, silent: true });
   core.info('\u001b[38;5;6mPreparing completed.');
 
   try {
