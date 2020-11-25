@@ -23,7 +23,7 @@
     "@actions/exec": "^1.0.4",
     "@actions/io": "^1.0.2",
     "@babel/runtime": "^7.12.5",
-    "axios": "^0.21.0"
+    "lodash": "^4.17.20"
   },
   "devDependencies": {
     "@babel/core": "^7.12.8",

@@ -4,7 +4,8 @@ const artifact = require('@actions/artifact');
 const core = require('@actions/core');
 const io = require('@actions/io');
 const exec = require('@actions/exec');
-const axios = require('axios');
+const { execSync } = require('child_process');
+const get = require('lodash/get');
 
 const apiUrl = 'https://hexlet.io/api/github_workflow/v1/project/';
 
@@ -12,6 +13,7 @@ const mountPoint = path.join('/', 'var', 'tmp');
 const buildPath = path.join(mountPoint, 'source');
 const codePath = path.join(buildPath, 'code');
 const projectPath = process.cwd();
+const githubRepository = process.env.GITHUB_REPOSITORY;
 
 const diffpath = path.join(
   mountPoint,
@@ -53,39 +55,76 @@ const uploadArtifacts = async () => {
 
 const app = async () => {
   core.info('Checking the possibility of starting testing...');
-  const url = new URL('ready_to_check', apiUrl);
-  url.searchParams.set('github_repository', 'mom4uk/backend-project-lvl2');
-  // url.searchParams.set('github_repository', process.env.GITHUB_REPOSITORY);
-  console.log(url.toString());
+  // Get readiness for checking repo
+  const urlCheck = new URL('ready_to_check/', apiUrl);
+  urlCheck.searchParams.set('github_repository', 'mom4uk/backend-project-lvl2');
+  // urlCheck.searchParams.set('github_repository', githubRepository);
+  const responseCheck = execSync(`curl -s ${urlCheck.toString()}`);
   try {
-    const response = await axios.get(url.toString());
-    console.log(response);
+    const result = JSON.parse(responseCheck.toString());
+    if (!result) {
+      core.error('Hexlet check will run after finish the last project step.');
+      process.exit(1);
+    }
   } catch (e) {
-    console.log(e.response);
+    core.error('Project or user not found!');
+    process.exit(1);
   }
-  // console.log(JSON.stringify(process.env, null, '  '));
+
+  // Get project base image name
+  let imageName;
+  const urlProject = new URL(apiUrl);
+  urlProject.searchParams.set('github_repository', 'mom4uk/backend-project-lvl2');
+  // urlProject.searchParams.set('github_repository', githubRepository);
+  const responseProject = execSync(`curl -s ${urlProject.toString()}`);
+  try {
+    const data = JSON.parse(responseProject.toString());
+    imageName = get(data, 'project.image_name');
+    if (!imageName) {
+      core.error('Image name is not defined!');
+      process.exit(1);
+    }
+  } catch (e) {
+    core.error('An error occurred getting the image name!');
+    process.exit(1);
+  }
   core.info('\u001b[38;5;6mChecking completed.');
 
-  // core.info('Preparing to start testing. Please wait...');
-  // await io.mkdirP(buildPath);
-  // await exec.exec(
-  //   `docker run -v ${mountPoint}:/mnt hexletprojects/css_l1_moon_project:release bash -c "cp -r /project/. /mnt/source && rm -rf /mnt/source/code"`,
-  //   [],
-  //   { silent: true },
-  // );
-  // await io.mkdirP(codePath);
-  // await io.cp(`${projectPath}/.`, codePath, { recursive: true });
-  // await exec.exec('docker tag hexletprojects/css_l1_moon_project:release source_development:latest', [], { silent: true });
-  // await exec.exec('docker-compose', ['build'], { cwd: buildPath, silent: true });
-  // core.info('\u001b[38;5;6mPreparing completed.');
+  core.info('Preparing to start testing. Please wait...');
+  // Create build directory
+  await io.mkdirP(buildPath);
 
-  // try {
-  //   await exec.exec('docker-compose', ['run', 'development', 'make', 'setup', 'test', 'lint'], { cwd: buildPath });
-  // } catch (e) {
-  //   core.error('Testing failed. See the output.');
-  //   await uploadArtifacts();
-  //   process.exit(1);
-  // }
+  // Copy original project files
+  await exec.exec(
+    `docker run -v ${mountPoint}:/mnt hexletprojects/css_l1_moon_project:release bash -c "cp -r /project/. /mnt/source && rm -rf /mnt/source/code"`,
+    [],
+    { silent: true },
+  );
+
+  // Create user code directory
+  await io.mkdirP(codePath);
+
+  // Copy user project to build directory
+  await io.cp(`${projectPath}/.`, codePath, { recursive: true });
+
+  // Create a tags
+  await exec.exec('docker tag hexletprojects/css_l1_moon_project:release source_development:latest', [], { silent: true });
+  await exec.exec('docker tag hexletprojects/css_l1_moon_project:release source_server:latest', [], { silent: true });
+  await exec.exec('docker tag hexletprojects/css_l1_moon_project:release source_db:latest', [], { silent: true });
+
+  // Build images
+  await exec.exec('docker-compose', ['build'], { cwd: buildPath, silent: false });
+  core.info('\u001b[38;5;6mPreparing completed.');
+
+  try {
+    // Run setup, tests, lint
+    await exec.exec('docker-compose', ['run', 'development', 'make', 'setup', 'test', 'lint'], { cwd: buildPath });
+  } catch (e) {
+    // Upload artifacts
+    await uploadArtifacts();
+    core.error('Testing failed. See the output.');
+    process.exit(1);
+  }
 };
 
 app();
