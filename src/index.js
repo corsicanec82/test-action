@@ -45,34 +45,37 @@ const uploadArtifacts = async () => {
 };
 
 const app = async () => {
-  fs.mkdirSync(path.join(mountPoint, 'source'));
+  console.log(process.env.COLORTERM);
+  console.log('some text');
+  console.error('some error');
+  // fs.mkdirSync(path.join(mountPoint, 'source'));
 
-  execSync(
-    `docker run -v ${mountPoint}:/mnt hexletprojects/css_l1_moon_project:release bash -c 'cp -r /project/. /mnt/source && rm -rf /mnt/source/code'`,
-    { stdio: 'inherit' },
-  );
+  // execSync(
+  //   `docker run -v ${mountPoint}:/mnt hexletprojects/css_l1_moon_project:release bash -c 'cp -r /project/. /mnt/source && rm -rf /mnt/source/code'`,
+  //   { stdio: 'inherit' },
+  // );
 
-  fs.mkdirSync(path.join(mountPoint, 'source', 'code'));
+  // fs.mkdirSync(path.join(mountPoint, 'source', 'code'));
 
-  execSync(
-    `cp -r $(pwd)/. ${mountPoint}/source/code`,
-    { stdio: 'inherit' },
-  );
+  // execSync(
+  //   `cp -r $(pwd)/. ${mountPoint}/source/code`,
+  //   { stdio: 'inherit' },
+  // );
 
-  execSync(
-    'docker tag hexletprojects/css_l1_moon_project:release source_development:latest',
-    { stdio: 'inherit' },
-  );
+  // execSync(
+  //   'docker tag hexletprojects/css_l1_moon_project:release source_development:latest',
+  //   { stdio: 'inherit' },
+  // );
 
-  try {
-    execSync(
-      'docker-compose run development make setup test lint',
-      { stdio: 'inherit', cwd: `${mountPoint}/source` },
-    );
-  } catch (e) {
-    await uploadArtifacts();
-    process.exit(1);
-  }
+  // try {
+  //   execSync(
+  //     'docker-compose run development make setup test lint',
+  //     { stdio: 'inherit', cwd: `${mountPoint}/source` },
+  //   );
+  // } catch (e) {
+  //   await uploadArtifacts();
+  //   process.exit(1);
+  // }
 };
 
 app();
