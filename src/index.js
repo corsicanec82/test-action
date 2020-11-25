@@ -3,6 +3,8 @@ const path = require('path');
 const childProcess = require('child_process');
 const artifact = require('@actions/artifact');
 const core = require('@actions/core');
+const io = require('@actions/io');
+const exec = require('@actions/exec');
 
 const { execSync } = childProcess;
 
@@ -73,6 +75,18 @@ const app = async () => {
   core.info('\u001b[3mItalic text');
   core.info('\u001b[4mUnderlined text');
   core.error('Error action may still succeed though');
+
+  const buildPath = path.join(mountPoint, 'source');
+  const codePath = path.join(buildPath, 'code');
+  console.log(process.cwd());
+  await exec.exec(`ls -la ${process.cwd()}`);
+
+  await io.mkdirP(buildPath);
+  await exec.exec(
+    `docker run -v ${mountPoint}:/mnt hexletprojects/css_l1_moon_project:release bash -c 'cp -r /project/. /mnt/source && rm -rf /mnt/source/code'`,
+  );
+  await io.mkdirP(codePath);
+  // await io.cp()
 
   // fs.mkdirSync(path.join(mountPoint, 'source'));
 
