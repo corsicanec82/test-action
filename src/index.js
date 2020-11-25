@@ -5,6 +5,8 @@ const core = require('@actions/core');
 const io = require('@actions/io');
 const exec = require('@actions/exec');
 
+const apiUrl = 'https://hexlet.io/api/github_workflow/v1/project';
+
 const mountPoint = path.join('/', 'var', 'tmp');
 const buildPath = path.join(mountPoint, 'source');
 const codePath = path.join(buildPath, 'code');
@@ -44,81 +46,49 @@ const uploadArtifacts = async () => {
   const artifactClient = artifact.create();
   const artifactName = 'test-results';
   await artifactClient.uploadArtifact(artifactName, filepaths, diffpath);
-  console.log('Download snapshots = require(Artifacts');
+  core.warning('Download snapshots from Artifacts');
 };
 
 const app = async () => {
-  // core.debug('Inside try block');
-  // core.warning('myInput was not set');
-  // core.info('Output to the actions build log');
-  // // 3/4 bit
-  // core.info('\u001b[35mThis foreground will be magenta');
+  core.debug('Inside try block');
+  core.warning('myInput was not set');
+  core.info('Output to the actions build log');
+  // 3/4 bit
+  core.info('\u001b[35mThis foreground will be magenta');
 
-  // // 8 bit
-  // core.info('\u001b[38;5;6mThis foreground will be cyan');
+  // 8 bit
+  core.info('\u001b[38;5;6mThis foreground will be cyan');
 
-  // // 24 bit
-  // core.info('\u001b[38;2;255;0;0mThis foreground will be bright red');
-  // // Background colors:
+  // 24 bit
+  core.info('\u001b[38;2;255;0;0mThis foreground will be bright red');
+  // Background colors:
 
-  // // 3/4 bit
-  // core.info('\u001b[43mThis background will be yellow');
+  // 3/4 bit
+  core.info('\u001b[43mThis background will be yellow');
 
-  // // 8 bit
-  // core.info('\u001b[48;5;6mThis background will be cyan');
+  // 8 bit
+  core.info('\u001b[48;5;6mThis background will be cyan');
 
-  // // 24 bit
-  // core.info('\u001b[48;2;255;0;0mThis background will be bright red');
-  // // Special styles:
+  // 24 bit
+  core.info('\u001b[48;2;255;0;0mThis background will be bright red');
+  // Special styles:
 
-  // core.info('\u001b[1mBold text');
-  // core.info('\u001b[3mItalic text');
-  // core.info('\u001b[4mUnderlined text');
-  // core.error('Error action may still succeed though');
+  core.info('\u001b[1mBold text');
+  core.info('\u001b[3mItalic text');
+  core.info('\u001b[4mUnderlined text');
+  core.error('Error action may still succeed though');
+
 
   await io.mkdirP(buildPath);
-  await exec.exec(
-    `docker run -v ${mountPoint}:/mnt hexletprojects/css_l1_moon_project:release bash -c "cp -r /project/. /mnt/source && rm -rf /mnt/source/code"`,
-  );
-  await io.mkdirP(codePath);
-  await io.cp(`${projectPath}/.`, codePath, { recursive: true });
-  await exec.exec('docker tag hexletprojects/css_l1_moon_project:release source_development:latest');
-  await exec.exec('docker-compose', ['build'], { cwd: buildPath });
-  try {
-    await exec.exec('docker-compose', ['run', 'development', 'make', 'setup', 'test', 'lint'], { cwd: buildPath });
-  } catch (e) {
-    const uploadResponse = await uploadArtifacts();
-    console.log(uploadResponse);
-    console.log(process.env.ACTIONS_RUNTIME_TOKEN);
-    console.log(process.env.ACTIONS_RUNTIME_URL);
-    process.exit(1);
-  }
-
-
-  // fs.mkdirSync(path.join(mountPoint, 'source'));
-
-  // execSync(
-  //   `docker run -v ${mountPoint}:/mnt hexletprojects/css_l1_moon_project:release bash -c 'cp -r /project/. /mnt/source && rm -rf /mnt/source/code'`,
-  //   { stdio: 'inherit' },
+  // await exec.exec(
+  //   `docker run -v ${mountPoint}:/mnt hexletprojects/css_l1_moon_project:release bash -c "cp -r /project/. /mnt/source && rm -rf /mnt/source/code"`,
   // );
-
-  // fs.mkdirSync(path.join(mountPoint, 'source', 'code'));
-
-  // execSync(
-  //   `cp -r $(pwd)/. ${mountPoint}/source/code`,
-  //   { stdio: 'inherit' },
-  // );
-
-  // execSync(
-  //   'docker tag hexletprojects/css_l1_moon_project:release source_development:latest',
-  //   { stdio: 'inherit' },
-  // );
-
+  // await io.mkdirP(codePath);
+  // await io.cp(`${projectPath}/.`, codePath, { recursive: true });
+  // await exec.exec('docker tag hexletprojects/css_l1_moon_project:release source_development:latest');
+  // await exec.exec('docker-compose', ['build'], { cwd: buildPath });
   // try {
-  //   execSync(
-  //     'docker-compose run development make setup test lint',
-  //     { stdio: 'inherit', cwd: `${mountPoint}/source` },
-  //   );
+  //   await exec.exec('docker-compose', ['run', 'development', 'make', 'setup', 'test', 'lint'], { cwd: buildPath });
   // } catch (e) {
   //   await uploadArtifacts();
   //   process.exit(1);
