@@ -52,7 +52,7 @@ const uploadArtifacts = async () => {
 
 const app = async () => {
   core.info('Checking the possibility of starting testing...');
-  core.info('\u001b[48;5;6mChecking completed.');
+  core.info('\u001b[38;5;6mChecking completed.');
 
   core.info('Preparing to start testing. Please wait...');
   await io.mkdirP(buildPath);
@@ -62,13 +62,14 @@ const app = async () => {
   );
   await io.mkdirP(codePath);
   await io.cp(`${projectPath}/.`, codePath, { recursive: true });
-  await exec.exec('docker tag hexletprojects/css_l1_moon_project:release source_development:latest', { silent: false });
+  await exec.exec('docker', ['tag', 'hexletprojects/css_l1_moon_project:release', 'source_development:latest'], { silent: false });
   await exec.exec('docker-compose', ['build'], { cwd: buildPath, silent: false });
-  core.info('\u001b[48;5;6mPreparing completed.');
+  core.info('\u001b[38;5;6mPreparing completed.');
 
   try {
     await exec.exec('docker-compose', ['run', 'development', 'make', 'setup', 'test', 'lint'], { cwd: buildPath });
   } catch (e) {
+    core.error('Testing failed. See the output.');
     await uploadArtifacts();
     process.exit(1);
   }
