@@ -75,4 +75,6 @@ const app = async () => {
   }
 };
 
-app();
+app().then(() => {
+  console.log('Testing finished');
+});
