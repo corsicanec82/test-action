@@ -46,53 +46,32 @@ const uploadArtifacts = async () => {
   const artifactClient = artifact.create();
   const artifactName = 'test-results';
   await artifactClient.uploadArtifact(artifactName, filepaths, diffpath);
-  core.warning('Download snapshots from Artifacts');
+  core.warning('Download snapshots from Artifacts.');
+  core.warning('The link is above the output window.');
 };
 
 const app = async () => {
-  core.debug('Inside try block');
-  core.warning('myInput was not set');
-  core.info('Output to the actions build log');
-  // 3/4 bit
-  core.info('\u001b[35mThis foreground will be magenta');
+  core.info('Checking the possibility of starting testing...');
+  core.info('\u001b[48;5;6mChecking completed.');
 
-  // 8 bit
-  core.info('\u001b[38;5;6mThis foreground will be cyan');
-
-  // 24 bit
-  core.info('\u001b[38;2;255;0;0mThis foreground will be bright red');
-  // Background colors:
-
-  // 3/4 bit
-  core.info('\u001b[43mThis background will be yellow');
-
-  // 8 bit
-  core.info('\u001b[48;5;6mThis background will be cyan');
-
-  // 24 bit
-  core.info('\u001b[48;2;255;0;0mThis background will be bright red');
-  // Special styles:
-
-  core.info('\u001b[1mBold text');
-  core.info('\u001b[3mItalic text');
-  core.info('\u001b[4mUnderlined text');
-  core.error('Error action may still succeed though');
-
-
+  core.info('Preparing to start testing. Please wait...');
   await io.mkdirP(buildPath);
-  // await exec.exec(
-  //   `docker run -v ${mountPoint}:/mnt hexletprojects/css_l1_moon_project:release bash -c "cp -r /project/. /mnt/source && rm -rf /mnt/source/code"`,
-  // );
-  // await io.mkdirP(codePath);
-  // await io.cp(`${projectPath}/.`, codePath, { recursive: true });
-  // await exec.exec('docker tag hexletprojects/css_l1_moon_project:release source_development:latest');
-  // await exec.exec('docker-compose', ['build'], { cwd: buildPath });
-  // try {
-  //   await exec.exec('docker-compose', ['run', 'development', 'make', 'setup', 'test', 'lint'], { cwd: buildPath });
-  // } catch (e) {
-  //   await uploadArtifacts();
-  //   process.exit(1);
-  // }
+  await exec.exec(
+    `docker run -v ${mountPoint}:/mnt hexletprojects/css_l1_moon_project:release bash -c "cp -r /project/. /mnt/source && rm -rf /mnt/source/code"`,
+    { silent: false },
+  );
+  await io.mkdirP(codePath);
+  await io.cp(`${projectPath}/.`, codePath, { recursive: true });
+  await exec.exec('docker tag hexletprojects/css_l1_moon_project:release source_development:latest', { silent: false });
+  await exec.exec('docker-compose', ['build'], { cwd: buildPath, silent: false });
+  core.info('\u001b[48;5;6mPreparing completed.');
+
+  try {
+    await exec.exec('docker-compose', ['run', 'development', 'make', 'setup', 'test', 'lint'], { cwd: buildPath });
+  } catch (e) {
+    await uploadArtifacts();
+    process.exit(1);
+  }
 };
 
 app();
