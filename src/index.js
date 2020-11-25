@@ -1,12 +1,9 @@
 const fs = require('fs');
 const path = require('path');
-// const childProcess = require('child_process');
 const artifact = require('@actions/artifact');
 const core = require('@actions/core');
 const io = require('@actions/io');
 const exec = require('@actions/exec');
-
-// const { execSync } = childProcess;
 
 const mountPoint = path.join('/', 'var', 'tmp');
 const buildPath = path.join(mountPoint, 'source');
@@ -87,8 +84,8 @@ const app = async () => {
   await io.cp(`${projectPath}/.`, codePath, { recursive: true });
   await exec.exec(`ls -la ${codePath}`);
   await exec.exec('docker tag hexletprojects/css_l1_moon_project:release source_development:latest');
-  await exec.exec('docker-compose build');
-  await exec.exec('docker-compose run development make setup test lint');
+  await exec.exec('docker-compose build', { cwd: buildPath });
+  await exec.exec('docker-compose run development make setup test lint', { cwd: buildPath });
 
 
   // fs.mkdirSync(path.join(mountPoint, 'source'));
