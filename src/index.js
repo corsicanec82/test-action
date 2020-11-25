@@ -4,8 +4,9 @@ const artifact = require('@actions/artifact');
 const core = require('@actions/core');
 const io = require('@actions/io');
 const exec = require('@actions/exec');
+const axios = require('axios');
 
-const apiUrl = 'https://hexlet.io/api/github_workflow/v1/project';
+const apiUrl = 'https://hexlet.io/api/github_workflow/v1/project/';
 
 const mountPoint = path.join('/', 'var', 'tmp');
 const buildPath = path.join(mountPoint, 'source');
@@ -52,7 +53,12 @@ const uploadArtifacts = async () => {
 
 const app = async () => {
   core.info('Checking the possibility of starting testing...');
-  console.log(JSON.stringify(process.env, null, '  '));
+  const url = new URL('ready_to_check', apiUrl);
+  url.searchParams.set('github_repository', 'mom4uk%2Fbackend-project-lvl2');
+  // url.searchParams.set('github_repository', process.env.GITHUB_REPOSITORY);
+  const response = await axios.get(url.toString());
+  console.log(response);
+  // console.log(JSON.stringify(process.env, null, '  '));
   core.info('\u001b[38;5;6mChecking completed.');
 
   // core.info('Preparing to start testing. Please wait...');
