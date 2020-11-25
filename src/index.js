@@ -59,12 +59,12 @@ const app = async () => {
   await exec.exec(
     `docker run -v ${mountPoint}:/mnt hexletprojects/css_l1_moon_project:release bash -c "cp -r /project/. /mnt/source && rm -rf /mnt/source/code"`,
     [],
-    { silent: false },
+    { silent: true },
   );
   await io.mkdirP(codePath);
   await io.cp(`${projectPath}/.`, codePath, { recursive: true });
-  await exec.exec('docker', ['tag', 'hexletprojects/css_l1_moon_project:release', 'source_development:latest'], { silent: false });
-  await exec.exec('docker-compose', ['build'], { cwd: buildPath, silent: false });
+  await exec.exec('docker tag hexletprojects/css_l1_moon_project:release source_development:latest', [], { silent: true });
+  await exec.exec('docker-compose', ['build'], { cwd: buildPath, silent: true });
   core.info('\u001b[38;5;6mPreparing completed.');
 
   try {
