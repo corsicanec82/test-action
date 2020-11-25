@@ -48,8 +48,8 @@ const uploadArtifacts = async () => {
 const app = async () => {
   core.debug('Inside try block');
   core.warning('myInput was not set');
-  core.info('Output to the actions build log')
-  core.error(`Error ${err}, action may still succeed though`);
+  core.info('Output to the actions build log');
+  core.error('Error action may still succeed though');
   // fs.mkdirSync(path.join(mountPoint, 'source'));
 
   // execSync(
