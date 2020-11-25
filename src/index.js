@@ -57,8 +57,8 @@ const app = async () => {
   core.info('Preparing to start testing. Please wait...');
   await io.mkdirP(buildPath);
   await exec.exec(
-    'docker',
-    ['run', '-v', `${mountPoint}:/mnt`, 'hexletprojects/css_l1_moon_project:release', 'bash', '-c', '"cp -r /project/. /mnt/source && rm -rf /mnt/source/code"'],
+    `docker run -v ${mountPoint}:/mnt hexletprojects/css_l1_moon_project:release bash -c "cp -r /project/. /mnt/source && rm -rf /mnt/source/code"`,
+    [],
     { silent: false },
   );
   await io.mkdirP(codePath);
