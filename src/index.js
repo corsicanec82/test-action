@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const childProcess = require('child_process');
 const artifact = require('@actions/artifact');
+const core = require('@actions/core');
 
 const { execSync } = childProcess;
 
@@ -45,9 +46,10 @@ const uploadArtifacts = async () => {
 };
 
 const app = async () => {
-  console.log(process.env.COLORTERM);
-  console.log('some text');
-  console.error('some error');
+  core.debug('Inside try block');
+  core.warning('myInput was not set');
+  core.info('Output to the actions build log')
+  core.error(`Error ${err}, action may still succeed though`);
   // fs.mkdirSync(path.join(mountPoint, 'source'));
 
   // execSync(
