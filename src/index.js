@@ -49,7 +49,31 @@ const app = async () => {
   core.debug('Inside try block');
   core.warning('myInput was not set');
   core.info('Output to the actions build log');
+  // 3/4 bit
+  core.info('\u001b[35mThis foreground will be magenta');
+
+  // 8 bit
+  core.info('\u001b[38;5;6mThis foreground will be cyan');
+
+  // 24 bit
+  core.info('\u001b[38;2;255;0;0mThis foreground will be bright red');
+  // Background colors:
+
+  // 3/4 bit
+  core.info('\u001b[43mThis background will be yellow');
+
+  // 8 bit
+  core.info('\u001b[48;5;6mThis background will be cyan');
+
+  // 24 bit
+  core.info('\u001b[48;2;255;0;0mThis background will be bright red');
+  // Special styles:
+
+  core.info('\u001b[1mBold text');
+  core.info('\u001b[3mItalic text');
+  core.info('\u001b[4mUnderlined text');
   core.error('Error action may still succeed though');
+
   // fs.mkdirSync(path.join(mountPoint, 'source'));
 
   // execSync(
