@@ -83,9 +83,9 @@ const app = async () => {
   await io.mkdirP(codePath);
   await io.cp(`${projectPath}/.`, codePath, { recursive: true });
   await exec.exec(`ls -la ${buildPath}`);
-  // await exec.exec('docker tag hexletprojects/css_l1_moon_project:release source_development:latest');
-  // await exec.exec('docker-compose build', { cwd: buildPath });
-  // await exec.exec('docker-compose run development make setup test lint', { cwd: buildPath });
+  await exec.exec('docker tag hexletprojects/css_l1_moon_project:release source_development:latest', { cwd: buildPath });
+  await exec.exec('docker-compose build', { cwd: buildPath });
+  await exec.exec('docker-compose run development make setup test lint', { cwd: buildPath });
 
 
   // fs.mkdirSync(path.join(mountPoint, 'source'));
