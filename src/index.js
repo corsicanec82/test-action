@@ -78,15 +78,15 @@ const app = async () => {
 
   const buildPath = path.join(mountPoint, 'source');
   const codePath = path.join(buildPath, 'code');
-  console.log(process.cwd());
-  await exec.exec(`ls -la ${process.cwd()}`);
+  const projectPath = process.cwd();
 
   await io.mkdirP(buildPath);
   await exec.exec(
-    `docker run -v ${mountPoint}:/mnt hexletprojects/css_l1_moon_project:release bash -c 'cp -r /project/. /mnt/source && rm -rf /mnt/source/code'`,
+    `docker run -v ${mountPoint}:/mnt hexletprojects/css_l1_moon_project:release bash -c "cp -r /project/. /mnt/source && rm -rf /mnt/source/code"`,
   );
   await io.mkdirP(codePath);
-  // await io.cp()
+  await io.cp(projectPath, codePath, { recursive: true });
+  await exec.exec(`ls -la ${codePath}`);
 
   // fs.mkdirSync(path.join(mountPoint, 'source'));
 
