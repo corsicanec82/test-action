@@ -54,7 +54,7 @@ const uploadArtifacts = async () => {
 const app = async () => {
   core.info('Checking the possibility of starting testing...');
   const url = new URL('ready_to_check', apiUrl);
-  url.searchParams.set('github_repository', 'mom4uk%2Fbackend-project-lvl2');
+  url.searchParams.set('github_repository', 'mom4uk/backend-project-lvl2');
   // url.searchParams.set('github_repository', process.env.GITHUB_REPOSITORY);
   const response = await axios.get(url.toString());
   console.log(response);
