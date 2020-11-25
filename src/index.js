@@ -56,8 +56,13 @@ const app = async () => {
   const url = new URL('ready_to_check', apiUrl);
   url.searchParams.set('github_repository', 'mom4uk/backend-project-lvl2');
   // url.searchParams.set('github_repository', process.env.GITHUB_REPOSITORY);
-  const response = await axios.get(url.toString());
-  console.log(response);
+  console.log(url.toString());
+  try {
+    const response = await axios.get(url.toString());
+    console.log(response);
+  } catch (e) {
+    console.log(e.response);
+  }
   // console.log(JSON.stringify(process.env, null, '  '));
   core.info('\u001b[38;5;6mChecking completed.');
 
