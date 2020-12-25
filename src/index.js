@@ -16,7 +16,7 @@ const { HttpClient } = require('@actions/http-client');
 
 const buildRoutes = require('./routes.js');
 
-const uploadArtifacts = async ({ diffpath }) => {
+const uploadArtifacts = async (diffpath) => {
   if (!fs.existsSync(diffpath)) {
     return;
   }
@@ -85,18 +85,18 @@ const check = async ({ projectSourcePath, verbose }) => {
   await exec.exec('docker-compose', ['-f', 'docker-compose.yml', 'up', '--abort-on-container-exit'], options);
 };
 
-const run = async (params) => {
+const runTests = async (params) => {
   const { mountPath, projectMemberId } = params;
   const routes = buildRoutes(process.env.ACTION_API_HOST);
   const projectSourcePath = path.join(mountPath, 'source');
   const codePath = path.join(projectSourcePath, 'code');
 
-  const diffpath = path.join(
-    mountPath,
-    'source',
-    'tmp',
-    'artifacts',
-  );
+  // const diffpath = path.join(
+  //   mountPath,
+  //   'source',
+  //   'tmp',
+  //   'artifacts',
+  // );
 
   const link = routes.projectMemberPath(projectMemberId);
   const http = new HttpClient();
@@ -120,7 +120,23 @@ const run = async (params) => {
 
   await core.group('Preparing', () => prepareProject(options));
   await core.group('Checking', () => check(options));
-  await core.group('Finishing', () => uploadArtifacts(options));
+  // await core.group('Finishing', () => uploadArtifacts(options));
 };
 
-module.exports = run;
+const runPostActions = async (params) => {
+  const { mountPath } = params;
+
+  const diffpath = path.join(
+    mountPath,
+    'source',
+    'tmp',
+    'artifacts',
+  );
+
+  await core.group('Finishing', () => uploadArtifacts(diffpath));
+};
+
+module.exports = {
+  runTests,
+  runPostActions,
+};
