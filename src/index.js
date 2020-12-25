@@ -113,7 +113,7 @@ const runTests = async (params) => {
   const options = {
     ...params,
     codePath,
-    diffpath,
+    // diffpath,
     projectMember,
     projectSourcePath,
   };
