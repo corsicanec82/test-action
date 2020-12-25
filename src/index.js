@@ -1,29 +1,22 @@
+// @ts-check
+
+// https://github.com/actions/javascript-action
+
 const fs = require('fs');
 const path = require('path');
 const artifact = require('@actions/artifact');
 const core = require('@actions/core');
 const io = require('@actions/io');
 const exec = require('@actions/exec');
-const { execSync } = require('child_process');
-const get = require('lodash/get');
+const { HttpClient } = require('@actions/http-client');
 
-const apiUrl = 'https://hexlet.io/api/github_workflow/v1/project/';
+// const chalk = require('chalk');
+// const { execSync } = require('child_process');
+// const _ = require('lodash');
 
-const mountPoint = path.join('/', 'var', 'tmp');
-const buildPath = path.join(mountPoint, 'source');
-const codePath = path.join(buildPath, 'code');
-const projectPath = process.cwd();
-const githubRepository = process.env.GITHUB_REPOSITORY;
+const buildRoutes = require('./routes.js');
 
-const diffpath = path.join(
-  mountPoint,
-  'source',
-  '__tests__',
-  '__image_snapshots__',
-  '__diff_output__',
-);
-
-const uploadArtifacts = async () => {
+const uploadArtifacts = async ({ diffpath }) => {
   if (!fs.existsSync(diffpath)) {
     return;
   }
@@ -33,96 +26,98 @@ const uploadArtifacts = async () => {
     return;
   }
 
+  // https://github.com/actions/toolkit/tree/main/packages/glob
   const filepaths = fs
-    .readdirSync(diffpath)
-    .filter((filename) => {
-      const filepath = path.join(diffpath, filename);
-      const stats = fs.statSync(filepath);
-      return stats.isFile();
-    })
-    .map((filename) => path.join(diffpath, filename));
+    .readdirSync(diffpath, { withFileTypes: true })
+    .filter((dirent) => dirent.isFile())
+    .map((dirent) => path.join(diffpath, dirent.name));
 
-  if (filepaths.length === 0) {
-    return;
-  }
+  // const filepaths = fs
+  //   .readdirSync(diffpath, { withFileTypes: true })
+    // .filter((filename) => {
+    //   const filepath = path.join(diffpath, filename);
+    //   const stats = fs.statSync(filepath);
+    //   return stats.isFile();
+    // })
+    // .map((filename) => path.join(diffpath, filename));
+  // if (filepaths.length === 0) {
+  //   return;
+  // }
+  console.log(filepaths);
 
   const artifactClient = artifact.create();
   const artifactName = 'test-results';
-  await artifactClient.uploadArtifact(artifactName, filepaths, diffpath);
-  core.warning('Download snapshots from Artifacts.');
-  core.warning('The link is above the output window.');
+  // await artifactClient.uploadArtifact(artifactName, filepaths, diffpath);
+  // core.warning('Download snapshots from Artifacts.');
+  // core.warning('The link is above the output window.');
 };
 
-const app = async () => {
-  core.info('Checking the possibility of starting testing...');
-  // Get readiness for checking repo
-  const urlCheck = new URL('ready_to_check/', apiUrl);
-  urlCheck.searchParams.set('github_repository', 'mom4uk/backend-project-lvl2');
-  // urlCheck.searchParams.set('github_repository', githubRepository);
-  const responseCheck = execSync(`curl -s ${urlCheck.toString()}`);
-  try {
-    const result = JSON.parse(responseCheck.toString());
-    if (!result) {
-      core.error('Hexlet check will run after finish the last project step.');
-      process.exit(1);
-    }
-  } catch (e) {
-    core.error('Project or user not found!');
-    process.exit(1);
-  }
+const prepareProject = async (options) => {
+  const {
+    verbose,
+    codePath,
+    projectPath,
+    projectMember,
+    projectSourcePath,
+    mountPath,
+  } = options;
+  const projectImageName = `hexletprojects/${projectMember.project.image_name}:latest`;
+  await io.mkdirP(projectSourcePath);
+  const pullCmd = `docker pull ${projectImageName}"`;
+  await exec.exec(pullCmd);
+  // TODO: the code directory remove from the container,
+  // since it was created under the rights of root.
+  // await io.rmRF(codePath); - deletes a directory with the rights of the current user
+  const copyCmd = `docker run -v ${mountPath}:/mnt ${projectImageName} bash -c "cp -r /project/. /mnt/source && rm -rf /mnt/source/code"`;
+  await exec.exec(copyCmd);
+  // await io.rmRF(codePath);
+  await io.mkdirP(codePath);
+  await io.cp(`${projectPath}/.`, codePath, { recursive: true });
+  console.log(projectSourcePath);
+  await exec.exec('docker-compose', ['run', 'app', 'make', 'setup'], { cwd: projectSourcePath, silent: !verbose });
+};
 
-  // Get project base image name
-  let imageName;
-  const urlProject = new URL(apiUrl);
-  urlProject.searchParams.set('github_repository', 'mom4uk/backend-project-lvl2');
-  // urlProject.searchParams.set('github_repository', githubRepository);
-  const responseProject = execSync(`curl -s ${urlProject.toString()}`);
-  try {
-    const data = JSON.parse(responseProject.toString());
-    imageName = get(data, 'project.image_name');
-    if (!imageName) {
-      core.error('Image name is not defined!');
-      process.exit(1);
-    }
-  } catch (e) {
-    core.error('An error occurred getting the image name!');
-    process.exit(1);
-  }
-  core.info('\u001b[38;5;6mChecking completed.');
+const check = async ({ projectSourcePath, verbose }) => {
+  const options = { cwd: projectSourcePath, silent: !verbose };
+  await exec.exec('docker-compose', ['-f', 'docker-compose.yml', 'up', '--abort-on-container-exit'], options);
+};
 
-  core.info('Preparing to start testing. It can take some time. Please wait...');
-  // Create build directory
-  await io.mkdirP(buildPath);
+const run = async (params) => {
+  const { mountPath, projectMemberId } = params;
+  const routes = buildRoutes(process.env.ACTION_API_HOST);
+  const projectSourcePath = path.join(mountPath, 'source');
+  const codePath = path.join(projectSourcePath, 'code');
 
-  // Copy original project files
-  await exec.exec(
-    `docker run -v ${mountPoint}:/mnt hexletprojects/css_l1_moon_project:release bash -c "cp -r /project/. /mnt/source && rm -rf /mnt/source/code"`,
-    [],
-    { silent: true },
+  const diffpath = path.join(
+    mountPath,
+    'source',
+    'tmp',
+    'artifacts',
   );
 
-  // Create user code directory
-  await io.mkdirP(codePath);
+  const link = routes.projectMemberPath(projectMemberId);
+  const http = new HttpClient();
+  const response = await http.get(link);
+  const data = await response.readBody();
+  core.debug(data);
+  const projectMember = JSON.parse(data);
 
-  // Copy user project to build directory
-  await io.cp(`${projectPath}/.`, codePath, { recursive: true });
-
-  // Create a tags
-  await exec.exec('docker tag hexletprojects/css_l1_moon_project:release source_development:latest', [], { silent: true });
-
-  // Build images
-  await exec.exec('docker-compose', ['build'], { cwd: buildPath, silent: true });
-  core.info('\u001b[38;5;6mPreparing completed.');
-
-  try {
-    // Run setup, tests, lint
-    await exec.exec('docker-compose', ['run', 'development', 'make', 'setup', 'test', 'lint'], { cwd: buildPath });
-  } catch (e) {
-    // Upload artifacts
-    await uploadArtifacts();
-    core.error('Testing failed. See the output.');
-    process.exit(1);
+  if (!projectMember.tests_on) {
+    core.info('Tests will run during review step');
+    return;
   }
+
+  const options = {
+    ...params,
+    codePath,
+    diffpath,
+    projectMember,
+    projectSourcePath,
+  };
+
+  await core.group('Preparing', () => prepareProject(options));
+  await core.group('Checking', () => check(options));
+  await core.group('Finishing', () => uploadArtifacts(options));
 };
 
-app();
+module.exports = run;
