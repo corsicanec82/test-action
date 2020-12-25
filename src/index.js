@@ -30,16 +30,8 @@ const uploadArtifacts = async (diffpath) => {
   const filepaths = fs
     .readdirSync(diffpath, { withFileTypes: true })
     .filter((dirent) => dirent.isFile())
-    .map((dirent) => path.join(diffpath, dirent.name));
+    .map((dirent) => dirent.name);
 
-  // const filepaths = fs
-  //   .readdirSync(diffpath, { withFileTypes: true })
-    // .filter((filename) => {
-    //   const filepath = path.join(diffpath, filename);
-    //   const stats = fs.statSync(filepath);
-    //   return stats.isFile();
-    // })
-    // .map((filename) => path.join(diffpath, filename));
   // if (filepaths.length === 0) {
   //   return;
   // }
@@ -52,6 +44,7 @@ const uploadArtifacts = async (diffpath) => {
   // const result = await artifactClient.uploadArtifact(artifactName, filepaths, diffpath);
   // console.log(result);
   // core.warning('Download snapshots from Artifacts.');
+  core.info('Download snapshots from Artifacts.')
   // core.warning('The link is above the output window.');
 };
 
