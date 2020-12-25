@@ -30,7 +30,7 @@ const uploadArtifacts = async (diffpath) => {
   const filepaths = fs
     .readdirSync(diffpath, { withFileTypes: true })
     .filter((dirent) => dirent.isFile())
-    .map((dirent) => dirent.name);
+    .map((dirent) => path.join(diffpath, dirent.name));
 
   // if (filepaths.length === 0) {
   //   return;
