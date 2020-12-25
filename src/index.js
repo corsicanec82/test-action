@@ -123,7 +123,7 @@ const runPostActions = async (params) => {
     mountPath,
     'source',
     'tmp',
-    'artifacts',
+    'artifacts1',
   );
 
   await core.group('Finishing', () => uploadArtifacts(diffpath));
