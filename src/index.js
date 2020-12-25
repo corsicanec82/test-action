@@ -30,7 +30,7 @@ const uploadArtifacts = async (diffpath) => {
   const filepaths = fs
     .readdirSync(diffpath, { withFileTypes: true })
     .filter((dirent) => dirent.isFile())
-    .map((dirent) => path.join(diffpath, dirent.name));
+    .map((dirent) => dirent.name);
 
   // if (filepaths.length === 0) {
   //   return;
@@ -123,7 +123,7 @@ const runPostActions = async (params) => {
     mountPath,
     'source',
     'tmp',
-    'artifacts1',
+    'artifacts',
   );
 
   await core.group('Finishing', () => uploadArtifacts(diffpath));
