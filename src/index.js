@@ -43,8 +43,8 @@ const uploadArtifacts = async (diffpath) => {
   console.log(result);
   // const result = await artifactClient.uploadArtifact(artifactName, filepaths, diffpath);
   // console.log(result);
-  // core.warning('Download snapshots from Artifacts.');
-  core.info('Download snapshots from Artifacts.')
+  core.warning('Download snapshots from Artifacts.');
+  // core.info('Download snapshots from Artifacts.')
   // core.warning('The link is above the output window.');
 };
 
