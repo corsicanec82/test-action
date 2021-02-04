@@ -8,6 +8,7 @@ const { execSync } = require('child_process');
 const get = require('lodash/get');
 const chalk = require('chalk');
 const os = require('os');
+const colors = require('colors');
 
 const apiUrl = 'https://hexlet.io/api/github_workflow/v1/project/';
 
@@ -57,7 +58,7 @@ const uploadArtifacts = async () => {
 
 const app = () => {
   core.info('Test string');
-  process.stdout.write(chalk.blue('sdsdsdsd') + os.EOL);
+  process.stdout.write(colors.red('sdsdsdsd') + os.EOL);
   core.info('Test string');
 
   // core.info('Checking the possibility of starting testing...');
