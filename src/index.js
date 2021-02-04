@@ -56,7 +56,7 @@ const uploadArtifacts = async () => {
 
 const app = async () => {
   core.info('Test string');
-  core.info(chalk.blue('Hello world!'));
+  console.log(chalk.blue('Hello world!'));
   core.info('Test string');
   return;
   core.info('Checking the possibility of starting testing...');
