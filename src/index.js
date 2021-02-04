@@ -61,7 +61,7 @@ const app = () => {
   // colors.enable();
   core.info('Test string');
   // core.info(colors.red('111sdsdsdsd'));
-  core.info(c.bgYellowBright.black.bold('111sdsdsdsd'));
+  core.info(c.bgYellow.black('111sdsdsdsd'));
   core.info('Test string');
 
   // core.info('Checking the possibility of starting testing...');
