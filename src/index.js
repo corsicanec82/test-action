@@ -58,7 +58,7 @@ const uploadArtifacts = async () => {
 
 const app = () => {
   core.info('Test string');
-  process.stdout.write(colors.red('sdsdsdsd') + os.EOL);
+  core.info(colors.red('111sdsdsdsd'));
   core.info('Test string');
 
   // core.info('Checking the possibility of starting testing...');
