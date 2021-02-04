@@ -6,6 +6,7 @@ const io = require('@actions/io');
 const exec = require('@actions/exec');
 const { execSync } = require('child_process');
 const get = require('lodash/get');
+const chalk = require('chalk');
 
 const apiUrl = 'https://hexlet.io/api/github_workflow/v1/project/';
 
@@ -54,6 +55,10 @@ const uploadArtifacts = async () => {
 };
 
 const app = async () => {
+  core.info('Test string');
+  core.info(chalk.blue('Hello world!'));
+  core.info('Test string');
+  return;
   core.info('Checking the possibility of starting testing...');
   // Get readiness for checking repo
   const urlCheck = new URL('ready_to_check/', apiUrl);
