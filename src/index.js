@@ -57,6 +57,7 @@ const uploadArtifacts = async () => {
 };
 
 const app = () => {
+  colors.enable();
   core.info('Test string');
   core.info(colors.red('111sdsdsdsd'));
   core.info('Test string');
