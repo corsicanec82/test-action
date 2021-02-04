@@ -9,6 +9,7 @@ const get = require('lodash/get');
 const chalk = require('chalk');
 const os = require('os');
 const colors = require('colors');
+const c = require('ansi-colors');
 
 const apiUrl = 'https://hexlet.io/api/github_workflow/v1/project/';
 
@@ -57,9 +58,10 @@ const uploadArtifacts = async () => {
 };
 
 const app = () => {
-  colors.enable();
+  // colors.enable();
   core.info('Test string');
-  core.info(colors.red('111sdsdsdsd'));
+  // core.info(colors.red('111sdsdsdsd'));
+  core.info(c.yellow('111sdsdsdsd'));
   core.info('Test string');
 
   // core.info('Checking the possibility of starting testing...');
